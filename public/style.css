@@ -1,0 +1,73 @@
+#menu {
+    width: 800px;
+    height: 600px;
+    position: fixed;
+    top: 0;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+}
+
+img.truck {
+    width: 100%;
+}
+
+.crate {
+    display: inline-block;
+    width: 32%;
+}
+
+.crate img {
+    width: 100%;
+}
+
+.crate .price {
+    color: red;
+}
+
+.crate .reward {
+    color: green;
+}
+
+.desc {
+    border-top: 2px solid white;
+    margin-top: 10px;
+    padding-top: 10px;
+}
+
+#money {
+    color: green;
+}
+
+.crate-placement {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+}
+
+.crate-placement.active {
+    border: 5px solid green;
+}
+
+.crate-placement.pos-1 {
+    left: 70px;
+    top: 70px;
+}
+
+.crate-placement.pos-2 {
+    left: 170px;
+    top: 70px;
+}
+
+.crate-placement.pos-3 {
+    left: 70px;
+    top: -30px;
+}
+
+.crate-placement.pos-4 {
+    left: 170px;
+    top: -30px;
+}
+
+.crate-placement img {
+    width: 100%;
+}
