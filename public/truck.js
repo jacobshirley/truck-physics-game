@@ -11,14 +11,16 @@ module.exports = class TruckLoader {
     create(matter, shapes, x, y) {
         let chassis = matter.add.image(x, y, "chassis", null, { shape: shapes.chassis, ...shapes.chassis });
 
-        let frontWheel = matter.add.image(x + 120, y + 95, 'wheel', null, {shape: shapes.wheel, ...shapes.wheel });
+        const WHEEL_Y = 50;
 
-        let backWheel = matter.add.image(x - 180, y + 95, 'wheel', null, {shape: shapes.wheel, ...shapes.wheel });
+        let frontWheel = matter.add.image(x + 60, y + WHEEL_Y, 'wheel', null, {shape: shapes.wheel, ...shapes.wheel });
+
+        let backWheel = matter.add.image(x - 90, y + WHEEL_Y, 'wheel', null, {shape: shapes.wheel, ...shapes.wheel });
 
         const spring = 0.5;
 
-        matter.add.constraint(chassis.body, frontWheel.body, 5, spring, { pointA: { x: 120, y: 95 } });
-        matter.add.constraint(chassis.body, backWheel.body, 5, spring, { pointA: { x: -180, y: 95 } });
+        matter.add.constraint(chassis.body, frontWheel.body, 5, spring, { pointA: { x: 60, y: WHEEL_Y } });
+        matter.add.constraint(chassis.body, backWheel.body, 5, spring, { pointA: { x: -90, y: WHEEL_Y } });
 
         return { chassis, frontWheel, backWheel };
     }

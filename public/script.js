@@ -215,7 +215,7 @@ async function create ()
         }
     });
 
-    this.cameras.main.startFollow(truck.chassis, true, 1, 1, 0, 20);
+    this.cameras.main.startFollow(truck.chassis, true, 1, 1, -200, 70);
 
 
     let crate = this.objs[3];
