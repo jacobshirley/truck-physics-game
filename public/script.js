@@ -14,7 +14,7 @@ var config = {
         default: 'matter',
         matter: {
             gravity: { y: 1 },
-            debug: false
+            debug: true
         }
     }
 };
@@ -149,7 +149,8 @@ async function create ()
 
     this.objs = [];
 
-    let truck = truckLoader.create(this.matter, shapes, 200, 470);
+    //truckLoader.scale(0.7, 0.7);
+    let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
 
     this.objs.push(truck.chassis);
     this.objs.push(truck.backWheel);
@@ -158,9 +159,10 @@ async function create ()
     let i = 0;
 
     for (var crateObj of crates) {
-        let x = -30 + 600 + ((i % 2) * 100);
-        let y = 432 - (Math.floor((i / 2)) * 100);
+        let x = -30 + 200 + ((i % 2) * 50);
+        let y = 432 - (Math.floor((i / 2)) * 50);
         let obj = this.matter.add.image(x, y, 'crate_' + crateObj.name, null, {shape: shapes.crate });
+        obj.setScale(0.5);
         obj.body.label = 'crate_' + crateObj.name + "_" + i;
         i++;
     }
