@@ -1,3 +1,5 @@
+const SCALE = 1.1;
+
 const TruckLoader = require("./truck.js");
 
 const parseVerticesFix = require("./parseVerticesFix.js");
@@ -149,7 +151,7 @@ async function create ()
 
     this.objs = [];
 
-    truckLoader.scale(0.7, 0.7);
+    truckLoader.scale(1.2, 1.2);
     let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
 
     this.objs.push(truck.chassis);
