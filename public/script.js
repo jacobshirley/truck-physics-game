@@ -1,4 +1,4 @@
-const SCALE = 1.1;
+const TRUCK_SCALE = 1.2;
 const LEVEL = "02";
 
 const TruckLoader = require("./truck.js");
@@ -152,7 +152,7 @@ async function create ()
 
     this.objs = [];
 
-    truckLoader.scale(1.2, 1.2);
+    truckLoader.scale(TRUCK_SCALE, TRUCK_SCALE);
     let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
 
     this.objs.push(truck.chassis);
@@ -192,7 +192,7 @@ async function create ()
         bodyA = getRootBody(bodyA);
         bodyB = getRootBody(bodyB);
 
-        if ((getCrateType(bodyA) && bodyB.label == "foreground") || (getCrateType(bodyB) && bodyA.label == "foreground")) {
+        if ((getCrateType(bodyA) && bodyB.label.includes("foreground")) || (getCrateType(bodyB) && bodyA.label.includes("foreground"))) {
             let crateBody = getCrateType(bodyA) ? bodyA : bodyB;
             let crateType = getCrateType(bodyA) || getCrateType(bodyB);
 
