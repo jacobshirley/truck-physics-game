@@ -1,0 +1,23 @@
+{
+    "background": [
+        {
+            "key": "background",
+            "path": "Background.png",
+            "parallaxSpeedX": 0
+        },
+        {
+            "key": "hills",
+            "path": "Hills.png",
+            "parallaxSpeedX": 0.3
+        }
+    ],
+    "foreground": [
+        {
+            "key": "foreground",
+            "physicsKey": "map02_foreground",
+            "path": "Foreground.png",
+            "offsetX": 4800,
+            "offsetY": 100
+        }
+    ]
+}

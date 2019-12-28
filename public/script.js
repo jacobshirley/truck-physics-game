@@ -1,4 +1,5 @@
 const SCALE = 1.1;
+const LEVEL = "02";
 
 const TruckLoader = require("./truck.js");
 
@@ -101,7 +102,7 @@ $("#start-game-loadout").click(e => {
 
 const MapLoader = require("./MapLoader.js");
 
-let map01 = new MapLoader("assets/world/maps/map_01/map_01.json");
+let map01 = new MapLoader("assets/world/maps/map_" + LEVEL + "/map_" + LEVEL + ".json");
 let truckLoader = new TruckLoader();
 
 async function preload ()
