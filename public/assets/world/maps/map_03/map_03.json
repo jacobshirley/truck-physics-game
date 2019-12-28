@@ -1,0 +1,13 @@
+{
+    "background": [
+    ],
+    "foreground": [
+        {
+            "key": "foreground",
+            "physicsKey": "map03_foreground",
+            "path": "Foreground.png",
+            "offsetX": 4800,
+            "offsetY": 100
+        }
+    ]
+}

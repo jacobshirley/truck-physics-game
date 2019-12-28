@@ -1,10 +1,17 @@
-const TRUCK_SCALE = 1.2;
+const TRUCK_SCALE = 1.1;
+const CRATE_SCALE = 0.6;
+const START_CRATE_X = 52;
+const START_CRATE_Y = 432;
 const LEVEL = "02";
+const TESTING = true;
+const WHEEL_ANGULAR_VELOCITY = Math.PI / 8;
 
 const TruckLoader = require("./truck.js");
 
 const parseVerticesFix = require("./parseVerticesFix.js");
 const path = require("path");
+
+const UIController = require("./ui.js");
 
 const $ = require("jquery");
 
@@ -88,17 +95,11 @@ game.scene.add("main", {
     update
 });
 
-$("#start-game").click(e => {
-    $("#main-menu").addClass("d-none");
-    $("#loadout").toggleClass("d-none");
-});
+//game.scene.start("boot");
 
-$("#start-game-loadout").click(e => {
-    $("#menu").addClass("d-none");
+const UI = new UIController((map) => {
     game.scene.start("main");
 });
-
-//game.scene.start("boot");
 
 const MapLoader = require("./MapLoader.js");
 
@@ -155,20 +156,11 @@ async function create ()
     truckLoader.scale(TRUCK_SCALE, TRUCK_SCALE);
     let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
 
-    this.objs.push(truck.chassis);
-    this.objs.push(truck.backWheel);
-    this.objs.push(truck.frontWheel);
+    //this.objs.push(truck.chassis);
+    //this.objs.push(truck.backWheel);
+    //this.objs.push(truck.frontWheel);
 
     let i = 0;
-
-    for (var crateObj of crates) {
-        let x = -30 + 200 + ((i % 2) * 50);
-        let y = 432 - (Math.floor((i / 2)) * 50);
-        let obj = this.matter.add.image(x, y, 'crate_' + crateObj.name, null, {shape: shapes.crate });
-        obj.setScale(0.5);
-        obj.body.label = 'crate_' + crateObj.name + "_" + i;
-        i++;
-    }
 
     function getRootBody (body)
     {
@@ -187,6 +179,18 @@ async function create ()
     chassis = truck.chassis;
     backWheel = truck.backWheel;
     frontWheel = truck.frontWheel;
+
+    let startCratePos = chassis.body.parts.find(x => x.label == "cratePosition").position;
+
+    let CRATE_SIZE = 100 * CRATE_SCALE;
+    for (var crateObj of crates) {
+        let x = startCratePos.x + ((i % 2) * CRATE_SIZE);
+        let y = startCratePos.y - (Math.floor((i / 2)) * CRATE_SIZE);
+        let obj = this.matter.add.image(x, y, 'crate_' + crateObj.name, null, {shape: shapes.crate });
+        obj.setScale(CRATE_SCALE);
+        obj.body.label = 'crate_' + crateObj.name + "_" + i;
+        i++;
+    }
 
     this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
         bodyA = getRootBody(bodyA);
@@ -211,9 +215,9 @@ async function create ()
 
                 let dist = Math.sqrt((dx * dx) + (dy * dy));
 
-                let force = 50 / (dist / 100);
+                let WHEEL_ANGULAR_VELOCITY = 50 / (dist / 100);
 
-                chassis.setVelocity((dx/dist) * force, (dy/dist) * force);
+                chassis.setVelocity((dx/dist) * WHEEL_ANGULAR_VELOCITY, (dy/dist) * WHEEL_ANGULAR_VELOCITY);
 
                 crateBody.gameObject.destroy();
             }
@@ -234,7 +238,7 @@ async function create ()
     var config = {
         key: 'explode',
         frames: this.anims.generateFrameNumbers('explosion'),
-        frameRate: 24,
+        frameRate: 30,
         yoyo: false,
         repeat: 0
     };
@@ -247,17 +251,16 @@ async function create ()
 }
 
 async function update() {
-    const FORCE = Math.PI / 10;
     if (dKey.isDown) {
-        Body.setAngularVelocity( backWheel.body, FORCE);
-        Body.setAngularVelocity( frontWheel.body, FORCE);
-        //chassis.applyForceFrom(chassis.body.position, new Phaser.Math.Vector2(50, 90));
+        Body.setAngularVelocity( backWheel.body, WHEEL_ANGULAR_VELOCITY);
+        Body.setAngularVelocity( frontWheel.body, WHEEL_ANGULAR_VELOCITY);
+        //chassis.applyWHEEL_ANGULAR_VELOCITYFrom(chassis.body.position, new Phaser.Math.Vector2(50, 90));
     }
     if (aKey.isDown) {
-        Body.setAngularVelocity( backWheel.body, -FORCE);
-        Body.setAngularVelocity( frontWheel.body, -FORCE);
+        Body.setAngularVelocity( backWheel.body, -WHEEL_ANGULAR_VELOCITY);
+        Body.setAngularVelocity( frontWheel.body, -WHEEL_ANGULAR_VELOCITY);
 
-        //chassis.applyForceFrom(chassis.body.position, new Phaser.Math.Vector2(50, 90));
+        //chassis.applyWHEEL_ANGULAR_VELOCITYFrom(chassis.body.position, new Phaser.Math.Vector2(50, 90));
     }
 
     await map01.update(this.cameras.main);
