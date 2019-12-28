@@ -34,7 +34,7 @@ module.exports = class MapLoader {
         }
 
         for (var image of json.foreground) {
-            let obj = _this.matter.add.image(image.offsetX, _this.game.config.height + image.offsetY, image.key, null, {shape: shapes[image.physicsKey] });
+            let obj = _this.matter.add.image(image.offsetX, _this.game.config.height + image.offsetY, image.key, null, {shape: shapes[image.physicsKey || image.key] });
 
             obj.label = "ground";
         }
