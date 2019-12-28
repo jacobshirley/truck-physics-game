@@ -149,7 +149,7 @@ async function create ()
 
     this.objs = [];
 
-    //truckLoader.scale(0.7, 0.7);
+    truckLoader.scale(0.7, 0.7);
     let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
 
     this.objs.push(truck.chassis);

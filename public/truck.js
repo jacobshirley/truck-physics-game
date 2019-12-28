@@ -28,9 +28,10 @@ module.exports = class TruckLoader {
         backWheel.setScale(this.scaleX, this.scaleY);
         frontWheel.setScale(this.scaleX, this.scaleY);
 
-        matter.add.constraint(chassis.body, frontWheel.body, 5, spring, { pointA: { x: WHEEL_1_X, y: WHEEL_Y, stiffness: spring } });
-        let c = matter.add.constraint(chassis.body, backWheel.body, 5, spring, { pointA: { x: WHEEL_2_X, y: WHEEL_Y, stiffness: spring } });
-        console.log(c);
+        matter.add.constraint(chassis.body, frontWheel.body, 0, spring, { pointA: { x: WHEEL_1_X, y: WHEEL_Y, stiffness: spring, length: 0 } });
+
+        matter.add.constraint(chassis.body, backWheel.body, 0, spring, { pointA: { x: WHEEL_2_X, y: WHEEL_Y, stiffness: spring, length: 0 } });
+        
         return { chassis, frontWheel, backWheel };
     }
 }
