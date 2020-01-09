@@ -1,0 +1,28 @@
+{
+    "startMoney": 5000,
+    "maps": ["map_01","map_02", "map_03"],
+    "crates": [
+        {
+            "name": "cabbage",
+            "label": "Cabbage",
+            "path": "Cabbage.png",
+            "price": 200,
+            "reward": 300,
+            "description": "This crate is full of cabbages!"
+        },
+        {
+            "name": "diamond",
+            "label": "Diamond",
+            "path": "Diamond.png",
+            "price": 1000,
+            "reward": 1500
+        },
+        {
+            "name": "explosives",
+            "label": "Explosive",
+            "path": "Explosives.png",
+            "price": 1000,
+            "reward": 2000
+        }
+    ]
+}

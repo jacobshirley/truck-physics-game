@@ -11,9 +11,23 @@ img.truck {
     width: 100%;
 }
 
+#hud {
+    position: fixed;
+    top: 0;
+    width: 800px;
+}
+
+#hud #time-left {
+    text-align: center;
+}
+
 .crate {
     display: inline-block;
     width: 32%;
+}
+
+.crate.disabled {
+    opacity: 0.5;
 }
 
 .crate img {
@@ -70,4 +84,25 @@ img.truck {
 
 .crate-placement img {
     width: 100%;
+}
+
+.calc-row {
+    text-align: center;
+}
+
+.bad {
+    color: red;
+}
+
+.good {
+    color: green;
+}
+
+.divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    height: 1px;
+    border-bottom: 2px solid white;
+
 }

@@ -1,28 +1,39 @@
 const path = require("path");
 
 module.exports = class MapLoader {
-    constructor(jsonFile) {
-        this.jsonFile = jsonFile;
-        this.json = fetch(jsonFile).then(x => x.json());
+    constructor(root, json) {
+        this.root = root;
+        this.json = json;
         this.sprites = [];
+        this.foreground = [];
     }
 
-    async preload(loader) {
-        let json = await this.json;
+    preload(loader, textures) {
+        let json = this.json;
 
-        let rootDir = path.dirname(this.jsonFile);
+        let root = path.dirname(this.root);
 
         for (var image of json.background) {
-            loader.image(image.key, rootDir + "/" + image.path);
+            textures.remove(image.key);
+            loader.image(image.key, root + "/" + image.path);
         }
 
         for (var image of json.foreground) {
-            loader.image(image.key, rootDir + "/" + image.path);
+            textures.remove(image.key);
+            loader.image(image.key, root + "/" + image.path);
         }
     }
 
     async create(_this, shapes) {
-        let json = await this.json;
+        let json = this.json;
+
+        while (this.sprites.length > 0) {
+            this.sprites.pop().sprite.destroy();
+        }
+
+        while (this.foreground.length > 0) {
+            this.foreground.pop().destroy();
+        }
 
         for (var image of json.background) {
             let obj = _this.add.tileSprite(0, 0, _this.game.config.width, _this.game.config.height, image.key);
@@ -37,6 +48,10 @@ module.exports = class MapLoader {
             let obj = _this.matter.add.image(image.offsetX, _this.game.config.height + image.offsetY, image.key, null, {shape: shapes[image.physicsKey || image.key] });
 
             obj.label = "ground";
+
+            this.foreground.push(obj);
+
+            console.log(this.foreground);
         }
     }
 

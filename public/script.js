@@ -6,12 +6,19 @@ const LEVEL = "02";
 const TESTING = true;
 const WHEEL_ANGULAR_VELOCITY = Math.PI / 8;
 
+
 const TruckLoader = require("./truck.js");
 
 const parseVerticesFix = require("./parseVerticesFix.js");
 const path = require("path");
 
 const UIController = require("./ui.js");
+const MapLoader = require("./MapLoader.js");
+
+const CrateLoader = require("./crates.js");
+const Effects = require("./effects.js");
+
+const { getRootBody } = require("./utils.js");
 
 const $ = require("jquery");
 
@@ -37,235 +44,202 @@ var config = {
 
 //Diamond: https://opengameart.org/content/diamond
 
-const CRATES = [
-    {
-        "name": "cabbage",
-        "path": "Cabbage.png",
-        "price": "200",
-        "reward": "300"
-    },
-    {
-        "name": "diamond",
-        "path": "Diamond.png",
-        "price": "1000",
-        "reward": "1500"
-    },
-    {
-        "name": "explosives",
-        "path": "Explosives.png",
-        "price": "1000",
-        "reward": "2000"
-    }
-];
+const configJson = require("../config.json");
 
-var crates = [];
 var placements = 1;
-
-for (var crate of CRATES) {
-    var $crate = $('<div class="crate" name="' + crate.name + '">' +
-                        '<img src="assets/world/crates/' + crate.path + '" />' +
-                        '<div class="price">- £' + crate.price + '</div>' +
-                        '<div class="reward">+ £' + crate.reward + '</div>' +
-                        '</div>');
-
-    $crate.hover((crate => e => {
-        $(".crate-placement.active").append('<img src="assets/world/crates/' + crate.path + '" />');
-    })(crate), function () {
-        $(".crate-placement.active").empty();
-    });
-
-    $crate.click((crate => e => {
-        $(".crate-placement.active").removeClass("active");
-
-        placements++;
-
-        crates.push(crate);
-
-        $("#placements").append('<div class="crate-placement pos-' + placements + ' active"><img src="assets/world/crates/' + crate.path + '" /></div>');
-    })(crate));
-
-    $("#crates").append($crate);
-}
 
 var game = new Phaser.Game(config);
 
-game.scene.add("main", {
-    preload: preload,
-    create: create,
-    update
-});
 
-//game.scene.start("boot");
 
-const UI = new UIController((map) => {
-    game.scene.start("main");
-});
+let maps = [ ...configJson.maps ];
 
-const MapLoader = require("./MapLoader.js");
+async function createScene(mapId) {
 
-let map01 = new MapLoader("assets/world/maps/map_" + LEVEL + "/map_" + LEVEL + ".json");
-let truckLoader = new TruckLoader();
+    let truckLoader = new TruckLoader();
+    let crateLoader = new CrateLoader();
+    let effects = new Effects();
+    let path = "assets/world/maps/" + mapId + "/" + mapId + ".json";
+    let map = new MapLoader(path, await fetch(path).then(x => x.json()));
 
-async function preload ()
-{
-    //this.load.setBaseURL('http://localhost');
+    var aKey;
+    var dKey;
 
-    truckLoader.preload(this.load);
+    var chassis;
+    var backWheel;
+    var frontWheel;
+    var Body;
 
-    this.load.image('crate_diamond', 'assets/world/crates/Diamond.png');
-    this.load.image('crate_explosives', 'assets/world/crates/Explosives.png');
-    this.load.image('crate_cabbage', 'assets/world/crates/Cabbage.png');
+    var clouds;
+    var hills;
+    var trees;
 
-    //this.load.image('background_1', 'assets/world/maps/background_01.png');
-    await map01.preload(this.load);
-
-    this.load.json('shapes', 'assets/truck/truck.json');
-
-    this.load.spritesheet('explosion', 'assets/animations/boom3.png', {frameWidth: 128, frameHeight: 128 });
-}
-
-var aKey;
-var dKey;
-
-var chassis;
-var backWheel;
-var frontWheel;
-var Body;
-
-var clouds;
-var hills;
-var trees;
-
-async function create ()
-{
-    var shapes = this.cache.json.get('shapes');
-
-    Body = Phaser.Physics.Matter.Matter.Body;
-    Vector = Phaser.Physics.Matter.Matter.Vector;
-    Common = Phaser.Physics.Matter.Matter.Common;
-    Vertices = Phaser.Physics.Matter.Matter.Vertices;
-    Bounds = Phaser.Physics.Matter.Matter.Bounds;
-    PhysicsEditorParser = Phaser.Physics.Matter.PhysicsEditorParser;
-    let Vector2 = Phaser.Math.Vector2;
-    parseVerticesFix(PhysicsEditorParser);
-
-    await map01.create(this, shapes);
-
-    this.objs = [];
-
-    truckLoader.scale(TRUCK_SCALE, TRUCK_SCALE);
-    let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
-
-    //this.objs.push(truck.chassis);
-    //this.objs.push(truck.backWheel);
-    //this.objs.push(truck.frontWheel);
-
-    let i = 0;
-
-    function getRootBody (body)
-    {
-        if (body.parent === body) { return body; }
-        while (body.parent !== body)
+    return new Phaser.Class({
+        Extends: Phaser.Scene,
+        key: mapId,
+        loader: {},
+        active: true,
+        preload: async function preload ()
         {
-            body = body.parent;
-        }
-        return body;
-    }
+            //this.load.setBaseURL('http://localhost');
 
-    function getCrateType(body) {
-        return body.label.includes("crate_") ? body.label.split("_")[1] : null;
-    }
+            console.log(this.cache.json.get('shapes'));
 
-    chassis = truck.chassis;
-    backWheel = truck.backWheel;
-    frontWheel = truck.frontWheel;
+            truckLoader.preload(this.load);
+            crateLoader.preload(this.load);
+            effects.preload(this.load);
+            await map.preload(this.load, this.textures);
 
-    let startCratePos = chassis.body.parts.find(x => x.label == "cratePosition").position;
+            this.load.json('shapes', 'assets/truck/truck.json');
+        },
 
-    let CRATE_SIZE = 100 * CRATE_SCALE;
-    for (var crateObj of crates) {
-        let x = startCratePos.x + ((i % 2) * CRATE_SIZE);
-        let y = startCratePos.y - (Math.floor((i / 2)) * CRATE_SIZE);
-        let obj = this.matter.add.image(x, y, 'crate_' + crateObj.name, null, {shape: shapes.crate });
-        obj.setScale(CRATE_SCALE);
-        obj.body.label = 'crate_' + crateObj.name + "_" + i;
-        i++;
-    }
+        create: async function create ()
+        {
 
-    this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
-        bodyA = getRootBody(bodyA);
-        bodyB = getRootBody(bodyB);
+            var shapes = this.cache.json.get('shapes');
 
-        if ((getCrateType(bodyA) && bodyB.label.includes("foreground")) || (getCrateType(bodyB) && bodyA.label.includes("foreground"))) {
-            let crateBody = getCrateType(bodyA) ? bodyA : bodyB;
-            let crateType = getCrateType(bodyA) || getCrateType(bodyB);
+            Body = Phaser.Physics.Matter.Matter.Body;
+            Vector = Phaser.Physics.Matter.Matter.Vector;
+            Common = Phaser.Physics.Matter.Matter.Common;
+            Vertices = Phaser.Physics.Matter.Matter.Vertices;
+            Bounds = Phaser.Physics.Matter.Matter.Bounds;
+            PhysicsEditorParser = Phaser.Physics.Matter.PhysicsEditorParser;
+            let Vector2 = Phaser.Math.Vector2;
+            parseVerticesFix(PhysicsEditorParser);
 
-            if (crateType == "explosives") {
-                let sprite = this.add.sprite(crateBody.gameObject.x, crateBody.gameObject.y - 50, 'exploding').setScale(2);
+            map.create(this, shapes);
 
-                sprite.once('animationcomplete', () => {
-                    sprite.destroy();
-                });
+            this.objs = [];
 
-                sprite.anims.load('explode');
-                sprite.anims.play('explode');
+            truckLoader.scale(TRUCK_SCALE, TRUCK_SCALE);
+            let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
 
-                let dx = chassis.x - crateBody.gameObject.x;
-                let dy = chassis.y - crateBody.gameObject.y;
+            //this.objs.push(truck.chassis);
+            //this.objs.push(truck.backWheel);
+            //this.objs.push(truck.frontWheel);
 
-                let dist = Math.sqrt((dx * dx) + (dy * dy));
+            let i = 0;
 
-                let WHEEL_ANGULAR_VELOCITY = 50 / (dist / 100);
+            chassis = truck.chassis;
+            backWheel = truck.backWheel;
+            frontWheel = truck.frontWheel;
 
-                chassis.setVelocity((dx/dist) * WHEEL_ANGULAR_VELOCITY, (dy/dist) * WHEEL_ANGULAR_VELOCITY);
+            let startCratePos = chassis.body.parts.find(x => x.label == "cratePosition").position;
 
-                crateBody.gameObject.destroy();
+            let CRATE_SIZE = 100 * CRATE_SCALE;
+            for (var crateObj of gameState.crates) {
+                let x = startCratePos.x + ((i % 2) * CRATE_SIZE);
+                let y = startCratePos.y - (Math.floor((i / 2)) * CRATE_SIZE);
+
+                crateLoader.create(this.matter, { x, y, shapes, type: crateObj.name, scale: CRATE_SCALE });
+
+                i++;
             }
+
+            this.matter.world.on('collisionstart', (event, bodyA, bodyB) => {
+                if (gameState.paused)
+                    return;
+
+                let rootBodyA = getRootBody(bodyA);
+                let rootBodyB = getRootBody(bodyB);
+
+                if (bodyA.label == "finish" || bodyB.label == "finish") {
+                    if (rootBodyA.label == "chassis" || rootBodyB.label == "chassis") {
+                        UI.select("win");
+                        UI.runFinishSequence(gameState);
+                        gameState.paused = true;
+                        console.log(gameState.crates);
+                    }
+                }
+            });
+
+            crateLoader.handleCollisions(this, truck.chassis, gameState);
+            this.cameras.main.startFollow(truck.chassis, true, 1, 1, -200, 70);
+
+            var config = {
+                key: 'explode',
+                frames: this.anims.generateFrameNumbers('explosion'),
+                frameRate: 30,
+                yoyo: false,
+                repeat: 0
+            };
+
+            let anim = this.anims.create(config);
+
+            aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+            dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+            //this.add.image(50, 50, 'trucks');
+        },
+
+        update: async function update() {
+            if (dKey.isDown) {
+                Body.setAngularVelocity( backWheel.body, WHEEL_ANGULAR_VELOCITY);
+                Body.setAngularVelocity( frontWheel.body, WHEEL_ANGULAR_VELOCITY);
+            }
+            if (aKey.isDown) {
+                Body.setAngularVelocity( backWheel.body, -WHEEL_ANGULAR_VELOCITY);
+                Body.setAngularVelocity( frontWheel.body, -WHEEL_ANGULAR_VELOCITY);
+            }
+
+            await map.update(this.cameras.main);
+
+            //clouds.tilePositionX += 0.1;
+            //hills.tilePositionX = this.cameras.main.scrollX * 0.3;
+            //trees.tilePositionX = this.cameras.main.scrollX * 0.5;
         }
     });
-
-    this.cameras.main.startFollow(truck.chassis, true, 1, 1, -200, 70);
-
-
-    let crate = this.objs[3];
-
-    let SCALE = 1;
-
-    for (var obj of this.objs) {
-        //obj.setScale(SCALE, SCALE);
-    }
-
-    var config = {
-        key: 'explode',
-        frames: this.anims.generateFrameNumbers('explosion'),
-        frameRate: 30,
-        yoyo: false,
-        repeat: 0
-    };
-
-    let anim = this.anims.create(config);
-
-    aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-    //this.add.image(50, 50, 'trucks');
 }
 
-async function update() {
-    if (dKey.isDown) {
-        Body.setAngularVelocity( backWheel.body, WHEEL_ANGULAR_VELOCITY);
-        Body.setAngularVelocity( frontWheel.body, WHEEL_ANGULAR_VELOCITY);
-        //chassis.applyWHEEL_ANGULAR_VELOCITYFrom(chassis.body.position, new Phaser.Math.Vector2(50, 90));
+async function run() {
+    let scenes = await Promise.all(maps.map(x => {
+        return createScene(x);
+    }));
+
+    for (let i = 0; i < scenes.length; i++) {
+        game.scene.add(maps[i], scenes[i]);
     }
-    if (aKey.isDown) {
-        Body.setAngularVelocity( backWheel.body, -WHEEL_ANGULAR_VELOCITY);
-        Body.setAngularVelocity( frontWheel.body, -WHEEL_ANGULAR_VELOCITY);
-
-        //chassis.applyWHEEL_ANGULAR_VELOCITYFrom(chassis.body.position, new Phaser.Math.Vector2(50, 90));
-    }
-
-    await map01.update(this.cameras.main);
-
-    //clouds.tilePositionX += 0.1;
-    //hills.tilePositionX = this.cameras.main.scrollX * 0.3;
-    //trees.tilePositionX = this.cameras.main.scrollX * 0.5;
 }
+
+run();
+//game.scene.start(maps[0]);
+
+//game.scene.start("map_01");
+
+//game.scene.remove(maps[0]);
+//game.scene.start(maps[1]);//*/
+
+const UI = new UIController({ onGameStart: () => {
+    if (gameState.currentMap) {
+        game.scene.remove(gameState.currentMap);
+    }
+    gameState.currentMap = maps.shift();
+
+    gameState.time = gameState.currentMap.levelTime;
+
+    gameState.paused = false;
+
+    //game.scene.add(gameState.currentMap, createScene(gameState.currentMap));
+    game.scene.start(gameState.currentMap);
+
+    //UI.select("win");
+    UI.hide();
+    //UI.runFinishSequence(gameState);
+//    game.scene.restart("main");
+} });
+
+const gameState = {
+    money: configJson.startMoney,
+    crates: [configJson.crates[2]],
+    currentMap: null,
+    time: configJson.maps[0].levelTime * 1000,
+    paused: false
+};
+
+UI.crateSelector(gameState, () => {
+
+});
+
+UI.updateId("money", "£" + gameState.money);
+
+UI.select("win");
+UI.runFinishSequence(gameState);

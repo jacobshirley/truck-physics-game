@@ -6,15 +6,8 @@ const Bounds = Phaser.Physics.Matter.Matter.Bounds;
 const Bodies = Phaser.Physics.Matter.Matter.Bodies;
 
 module.exports =  function parseVerticesFix(PhysicsEditorParser) {
-
-
     function test(vertexSets, options)
     {
-
-
-
-        console.log(Vector);
-
         var i, j, k, v, z;
         var parts = [];
 

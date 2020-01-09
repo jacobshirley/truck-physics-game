@@ -1,7 +1,7 @@
 {
     "background": [
         {
-            "key": "background",
+            "key": "background2",
             "path": "Background.png",
             "parallaxSpeedX": 0
         },
@@ -13,9 +13,9 @@
     ],
     "foreground": [
         {
-            "key": "foreground",
+            "key": "foreground2",
             "physicsKey": "map02_foreground",
-            "path": "Foreground.png",
+            "path": "Foreground2.png",
             "offsetX": 4800,
             "offsetY": 100
         }
