@@ -74,6 +74,8 @@ async function createScene(mapId) {
     var hills;
     var trees;
 
+    var lastUpdate = -1;
+
     return new Phaser.Class({
         Extends: Phaser.Scene,
         key: mapId,
@@ -91,6 +93,8 @@ async function createScene(mapId) {
             await map.preload(this.load, this.textures);
 
             this.load.json('shapes', 'assets/truck/truck.json');
+
+            gameState.time = map.json.levelTime * 1000;
         },
 
         create: async function create ()
@@ -169,9 +173,22 @@ async function createScene(mapId) {
             aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
             dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
             //this.add.image(50, 50, 'trucks');
+
+            lastUpdate = Date.now();
         },
 
         update: async function update() {
+            if (gameState.paused)
+                return;
+
+            let dtime = Date.now() - lastUpdate;
+            lastUpdate = Date.now();
+            gameState.time -= dtime;
+            if (gameState.time < 0)
+                gameState.time = 0;
+
+            UI.updateId("time-left", (gameState.time / 1000).toFixed(1));
+
             if (dKey.isDown) {
                 Body.setAngularVelocity( backWheel.body, WHEEL_ANGULAR_VELOCITY);
                 Body.setAngularVelocity( frontWheel.body, WHEEL_ANGULAR_VELOCITY);
@@ -214,8 +231,6 @@ const UI = new UIController({ onGameStart: () => {
     }
     gameState.currentMap = maps.shift();
 
-    gameState.time = gameState.currentMap.levelTime;
-
     gameState.paused = false;
 
     //game.scene.add(gameState.currentMap, createScene(gameState.currentMap));
@@ -229,7 +244,7 @@ const UI = new UIController({ onGameStart: () => {
 
 const gameState = {
     money: configJson.startMoney,
-    crates: [configJson.crates[2]],
+    crates: [],
     currentMap: null,
     time: configJson.maps[0].levelTime * 1000,
     paused: false
@@ -241,5 +256,5 @@ UI.crateSelector(gameState, () => {
 
 UI.updateId("money", "£" + gameState.money);
 
-UI.select("win");
-UI.runFinishSequence(gameState);
+UI.select("loadout");
+//UI.runFinishSequence(gameState);

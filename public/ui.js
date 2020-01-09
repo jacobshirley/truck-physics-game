@@ -54,6 +54,8 @@ module.exports = class UIController {
             reward += crate.reward;
         }
 
+        gameState.money += reward;
+
         function fadeInPromise($el) {
             return new Promise((res, err) => {
                 $el.hide();
@@ -63,45 +65,47 @@ module.exports = class UIController {
             });
         }
 
-        for (let calc of Object.keys(calcs)) {
-            let calcObj = calcs[calc];
-            let total = calcObj.reward - calcObj.cost;
-
-            let $new = $("<div class=\"calc-row\">" +
-                          calc + " crates: <span class=\"bad\">-£" + calcObj.cost + "</span> + <span class=\"good\">£" + calcObj.crate.reward + " * " + calcObj.count + "</span> = <span class=\"" + (total < 0 ? "bad" : "good") + "\">£" +  total + "</span>" +
-                          "</div>");
+        async function fadeInEl(elStr) {
+            let $new = $(elStr);
 
             $calcs.append($new);
             await fadeInPromise($new);
         }
 
-        let $divider = $("<div class=\"divider\"></div>");
-        $calcs.append($divider);
-        await fadeInPromise($divider);
+        let timeBonus = gameState.crates.length * 10 * (gameState.time / 1000);
+        gameState.money += timeBonus;
+        if (timeBonus > 0) {
+            await fadeInEl("<div class=\"calc-row\">Time bonus: <span class=\"good\"># of crates * 10 * time left = £" + timeBonus.toFixed(2) + "</span>" +
+                          "</div>");
 
-        let $new = $("<div class=\"calc-row\">Spent: <span class=\"bad\">£" + spent + "</span>" +
+            await fadeInEl("<div class=\"divider\"></div>");
+        }
+
+        for (let calc of Object.keys(calcs)) {
+            let calcObj = calcs[calc];
+            let total = calcObj.reward - calcObj.cost;
+
+            fadeInEl("<div class=\"calc-row\">" +
+                          calc + " crates: <span class=\"bad\">-£" + calcObj.cost + "</span> + <span class=\"good\">£" + calcObj.crate.reward + " * " + calcObj.count + "</span> = <span class=\"" + (total < 0 ? "bad" : "good") + "\">£" +  total + "</span>" +
+                          "</div>");
+        }
+
+        if (gameState.crates.length > 0) {
+            await fadeInEl("<div class=\"divider\"></div>");
+        }
+
+        await fadeInEl("<div class=\"calc-row\">Spent: <span class=\"bad\">£" + spent + "</span>" +
                       "</div>");
 
-        $calcs.append($new);
-        await fadeInPromise($new);
-
-        $new = $("<div class=\"calc-row\">Earned: <span class=\"good\">£" + reward + "</span>" +
+        await fadeInEl("<div class=\"calc-row\">Earned: <span class=\"good\">£" + reward + "</span>" +
                       "</div>");
 
-        $calcs.append($new);
-        await fadeInPromise($new);
-
-        $divider = $("<div class=\"divider\"></div>");
-        $calcs.append($divider);
-        await fadeInPromise($divider);
+        await fadeInEl("<div class=\"divider\"></div>");
 
         let total = reward - spent;
 
-        $new = $("<div class=\"calc-row\">Total: <span class=\"" + (total < 0 ? "bad" : "good") + "\">£" + total + "</span>" +
+        await fadeInEl("<div class=\"calc-row\">Total: <span class=\"" + (total < 0 ? "bad" : "good") + "\">£" + (total + timeBonus).toFixed(2) + "</span>" +
                       "</div>");
-
-        $calcs.append($new);
-        await fadeInPromise($new);
     }
 
     crateSelector(state, onAddCrate) {
@@ -130,17 +134,17 @@ module.exports = class UIController {
             });
 
             $crate.click((crate => e => {
+                $(".crate-placement.active").removeClass("active");
                 if (state.crates.length >= 4)
                     return null;
-
-                $(".crate-placement.active").removeClass("active");
 
                 state.crates.push(crate);
 
                 state.money -= crate.price;
+
                 if (state.money < 0) {
                     state.money = 0;
-                } else if (state.money >= crate.price && state.crates.length < 4) {
+                } else if (state.money >= crate.price && state.crates.length <= 4) {
                     $("#placements").append('<div class="crate-placement pos-' + state.crates.length + ' active"><img src="assets/world/crates/' + crate.path + '" /></div>');
                 }
 

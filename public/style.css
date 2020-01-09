@@ -15,6 +15,7 @@ img.truck {
     position: fixed;
     top: 0;
     width: 800px;
+    text-align: center;
 }
 
 #hud #time-left {
