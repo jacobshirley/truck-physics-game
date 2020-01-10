@@ -8,6 +8,16 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   </head>
   <body>
+      <div id="hud">
+          <div class="container">
+              <div class="row justify-content-center">
+                  <div class="col-sm-12">
+                      Time left: <span id="time-left"></span> seconds
+                  </div>
+              </div>
+              <button id="end-level" class="btn float-right btn-outline-primary">End level</button>
+          </div>
+      </div>
       <div id="ui">
           <div id="main-menu" class="container">
               <div class="row">
@@ -26,20 +36,22 @@
               </div>
               <div class="row">
                 <div class="col-sm-4">
-                    <div id="money">£2000</div>
+                    <h5 class="pt-3 pb-3">Current money: <span id="money">£2000</span></h5>
                     <div id="crates">
                     </div>
                   <div id="desc">
                   </div>
                   <div>
-                     <p>This is the truck loadout stage. Here you can select which crates you will be carrying to the end of the level. Your reward will depend on how many you can carry.</p>
+                     <p>Welcome to truck physics madness! Select which crates you will be carrying to the end of the map. Your reward will depend on how many you can carry without losing in the process!</p>
 
-                     <p>Every crate has a price and a reward. You can select</p>
+                     <p>Every crate has a price and a reward. The crate will be placed where that green marker is now. You can have a maximum of for crates</p>
+
+                     <p>Pro tip: put your valuable crates at the bottom!!</p>
                  </div>
                 </div>
                 <div class="col-sm-8">
 
-                  <img class="truck" src="assets/truck/truck_1/truck_1_body_lights_on_yellow.png" />
+                  <img class="truck" src="assets/truck/truck_2/truck_2_body_lights_on_red.png" />
                   <div id="placements">
                       <div class="crate-placement pos-1 active">
                       </div>
@@ -47,7 +59,8 @@
                 </div>
               </div>
           </div>
-          <div id="win" class="container">
+          <div id="finish" class="container">
+              <button id="next-map" class="float-right btn btn-outline-primary">Next level</button>
               <div class="row">
                   <div class="col-sm-12">
                       <h2>Earnings</h2>
@@ -58,18 +71,22 @@
                 <div id="calcs" class="col-sm-6">
                 </div>
             </div>
-            <button id="next-map" class="float-right btn btn-outline-primary">Next map</button>
           </div>
-      </div>
-      <div id="hud">
-          <div class="container">
-              <div class="row justify-content-center">
-                  <div class="col-sm-6">
-                      Time left: <span id="time-left"></span> seconds
+          <div id="highscores" class="container">
+              <div class="row">
+                  <div class="col-sm-12">
+                      <h2>Highscores</h2>
+                      <button id="restart-game" class="float-right btn btn-outline-primary">Restart game</button>
                   </div>
               </div>
+              <div class="row">
+                  <div id="list" class="col-sm-12 text-center">
+                  </div>
+              </div>
+
           </div>
       </div>
+
       <script src="build.js"></script>
   </body>
 </html>

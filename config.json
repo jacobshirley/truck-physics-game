@@ -1,6 +1,8 @@
 {
     "startMoney": 5000,
+    "maxHighscores": 10,
     "maps": ["map_01","map_02", "map_03"],
+    "crateDir": "assets/crates/",
     "crates": [
         {
             "name": "cabbage",

@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
     watch: true,
-  entry: './public/script.js',
+  entry: './src/script.js',
   mode: "development",
   output: {
     filename: 'build.js',

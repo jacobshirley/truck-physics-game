@@ -31,6 +31,7 @@
     "foreground": [
         {
             "key": "foreground",
+            "physicsKey": "map01_foreground",
             "path": "Foreground.png",
             "offsetX": 3800,
             "offsetY": 100
