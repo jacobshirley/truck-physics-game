@@ -33,6 +33,10 @@ module.exports = class MapLoader {
 
             this.sprites.push({sprite: obj, config: image});
         }
+    }
+
+    async createForeground(_this, shapes) {
+        let json = this.json;
 
         for (var image of json.foreground) {
             let obj = _this.matter.add.image(image.offsetX, _this.game.config.height + image.offsetY, this.root+image.key, null, {shape: shapes[image.physicsKey || image.key] });
@@ -40,7 +44,7 @@ module.exports = class MapLoader {
             obj.label = "ground";
 
             this.foreground.push(obj);
-            }
+        }
     }
 
     async update(camera) {

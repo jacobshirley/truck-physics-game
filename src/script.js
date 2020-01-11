@@ -29,7 +29,7 @@ var config = {
         default: 'matter',
         matter: {
             gravity: { y: 1 },
-            debug: true
+            debug: false
         }
     }
 };
@@ -89,8 +89,6 @@ async function createScene(mapId) {
         active: true,
         preload: async function preload ()
         {
-            //this.load.setBaseURL('http://localhost');
-
             truckLoader.preload(this.load);
             crateLoader.preload(this.load);
             effects.preload(this.load);
@@ -108,9 +106,8 @@ async function createScene(mapId) {
 
             parseVerticesFix(Phaser.Physics.Matter.PhysicsEditorParser);
             effects.create(this.anims);
-            map.create(this, shapes);
 
-            this.objs = [];
+            map.create(this, shapes);
 
             truckLoader.scale(TRUCK_SCALE, TRUCK_SCALE);
             let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
@@ -151,7 +148,9 @@ async function createScene(mapId) {
             });
 
             crateLoader.handleCollisions(this, truck.chassis, gameState);
-            this.cameras.main.startFollow(truck.chassis, true, 1, 1, -200, 100);
+            this.cameras.main.startFollow(truck.chassis, true, 1, 1, -200, 150);
+
+            map.createForeground(this, shapes);
 
             aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
             dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -198,18 +197,22 @@ async function run() {
     }
 }
 
-run();
-
-const UI = new UIController({ onGameStart: () => {
+function nextMap(mapId, crates) {
     if (gameState.currentMap)
         game.scene.stop(gameState.currentMap);
 
-    gameState.currentMap = gameState.maps.shift();
+    gameState.currentMap = mapId || gameState.maps.shift();
     gameState.paused = false;
-    gameState.selectedCrates = [ ... gameState.crates ];
+    gameState.crates = typeof crates != "undefined" ? crates : gameState.crates;
+    gameState.selectedCrates = crates ? [...crates] : [ ...gameState.crates ];
 
-    game.scene.start(gameState.currentMap);
+    game.scene.start(mapId || gameState.currentMap);
+
     UI.hide();
+}
+
+const UI = new UIController({ onGameStart: () => {
+    nextMap();
 }, onNextMap: () => {
     UI.select("loadout");
     UI.crateSelector(gameState);
@@ -237,5 +240,8 @@ const UI = new UIController({ onGameStart: () => {
     UI.runHighscoresSequence(gameState);
 }});
 
-UI.crateSelector(gameState);
-UI.select("loadout");
+run().then(() => {
+    UI.crateSelector(gameState);
+    UI.select("loadout");
+    nextMap("map_01", [...configJson.crates]);
+});

@@ -1,6 +1,17 @@
 {
     "levelTime": 30,
+    "timerColour": "white",
     "background": [
+        {
+            "key": "background",
+            "path": "Background.png",
+            "parallaxSpeedX": 0
+        },
+        {
+            "key": "mid",
+            "path": "Mid.png",
+            "parallaxSpeedX": 0.25
+        }
     ],
     "foreground": [
         {

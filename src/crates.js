@@ -8,7 +8,6 @@ function getCrateType(body) {
 
 class CrateLoader {
     constructor() {
-        this.crates = [];
     }
 
     handleCollisions(scene, chassis, gameState) {

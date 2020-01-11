@@ -63,7 +63,7 @@ module.exports = class UIController {
             highscores.pop();
 
         for (var i = 0; i < highscores.length; i++) {
-            await fadeInEl("<div>" + (i + 1) + ". £" + highscores[i] + "</div>", $list);
+            await fadeInEl("<div>" + (i + 1) + ". £" + highscores[i].toFixed(2) + "</div>", $list);
         }
 
         document.cookie = JSON.stringify(highscores);

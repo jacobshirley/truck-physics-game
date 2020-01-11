@@ -1,5 +1,5 @@
 {
-    "levelTime": 50,
+    "levelTime": 60,
     "background": [
         {
             "key": "background",
@@ -7,17 +7,33 @@
             "parallaxSpeedX": 0
         },
         {
+            "key": "distant_clouds",
+            "path": "Distant Clouds.png",
+            "speedX": 0.1
+        },
+        {
+            "key": "clouds",
+            "path": "Clouds.png",
+            "parallaxSpeed": 0,
+            "speedX": 0.2
+        },
+        {
             "key": "hills",
             "path": "Hills.png",
             "parallaxSpeedX": 0.3
+        },
+        {
+            "key": "trees",
+            "path": "Trees.png",
+            "parallaxSpeedX": 0.4
         }
     ],
     "foreground": [
         {
             "key": "foreground",
-            "physicsKey": "map02_foreground",
+            "physicsKey": "map01_foreground",
             "path": "Foreground.png",
-            "offsetX": 4800,
+            "offsetX": 4700,
             "offsetY": 100
         }
     ]
