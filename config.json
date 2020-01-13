@@ -3,6 +3,16 @@
     "maxHighscores": 10,
     "maps": ["map_01","map_02", "map_03"],
     "crateDir": "assets/crates/",
+    "crate": {
+        "scale": 0.5
+    },
+    "truck": {
+        "startX": 350,
+        "startY": 470,
+        "suspensionConst": 0.2,
+        "scale": 1.1,
+        "wheelVelocity": 0.4
+    },
     "crates": [
         {
             "name": "cabbage",

@@ -9,24 +9,23 @@
         {
             "key": "bg_cloud6",
             "path": "bg_cloud6.png",
-            "parallaxSpeedX": 0.05
+            "speedX": 0.05
         },
         {
             "key": "bg_cloud2",
             "path": "bg_cloud2.png",
-            "parallaxSpeedX": 0.1
+            "speedX": 0.1
         },
         {
             "key": "bg_cloud5",
             "path": "bg_cloud5.png",
-            "parallaxSpeedX": 0.1
+            "speedX": 0.1
         },
         {
             "key": "bg_cloud3",
             "path": "bg_cloud3.png",
-            "parallaxSpeedX": 0.1
+            "speedX": 0.1
         },
-
         {
             "key": "hills",
             "path": "Hills.png",
@@ -41,7 +40,7 @@
     "foreground": [
         {
             "key": "foreground",
-            "physicsKey": "map02_foreground",
+            "physicsKey": "map01_foreground",
             "path": "Foreground.png",
             "offsetX": 4800,
             "offsetY": 100

@@ -1,10 +1,4 @@
-const TRUCK_SCALE = 1.1;
-const CRATE_SCALE = 0.4;
-const START_CRATE_X = 52;
-const START_CRATE_Y = 432;
-const LEVEL = "02";
-const TESTING = true;
-const WHEEL_ANGULAR_VELOCITY = Math.PI / 8;
+
 
 
 const TruckLoader = require("./truck.js");
@@ -20,7 +14,7 @@ const Effects = require("./effects.js");
 
 const { getRootBody } = require("./utils.js");
 
-var config = {
+let config = {
     autoPlay: false,
     type: Phaser.AUTO,
     width: 800,
@@ -54,7 +48,7 @@ let gameState = {
     paused: false
 };
 
-var game = new Phaser.Game(config);
+let game = new Phaser.Game(config);
 let maps = [ ...configJson.maps ];
 
 async function createScene(mapId) {
@@ -65,22 +59,22 @@ async function createScene(mapId) {
     let path = "assets/world/maps/" + mapId + "/" + mapId + ".json";
     let map = new MapLoader(path, await fetch(path).then(x => x.json()));
 
-    var aKey;
-    var dKey;
+    let aKey;
+    let dKey;
 
-    var leftArrowKey;
-    var rightArrowKey;
+    let leftArrowKey;
+    let rightArrowKey;
 
-    var chassis;
-    var backWheel;
-    var frontWheel;
+    let chassis;
+    let backWheel;
+    let frontWheel;
     const Body = Phaser.Physics.Matter.Matter.Body;
 
-    var clouds;
-    var hills;
-    var trees;
+    let clouds;
+    let hills;
+    let trees;
 
-    var lastUpdate = -1;
+    let lastUpdate = -1;
 
     return new Phaser.Class({
         Extends: Phaser.Scene,
@@ -102,15 +96,15 @@ async function createScene(mapId) {
         create: async function create ()
         {
 
-            var shapes = this.cache.json.get('shapes');
+            let shapes = this.cache.json.get('shapes');
 
             parseVerticesFix(Phaser.Physics.Matter.PhysicsEditorParser);
             effects.create(this.anims);
 
             map.create(this, shapes);
 
-            truckLoader.scale(TRUCK_SCALE, TRUCK_SCALE);
-            let truck = truckLoader.create(this.matter, shapes, 200, 470, 0.2);
+            truckLoader.scale(configJson.truck.scale, configJson.truck.scale);
+            let truck = truckLoader.create(this, shapes, configJson.truck.startX, configJson.truck.startY, configJson.truck.springConst);
 
             let i = 0;
 
@@ -120,12 +114,12 @@ async function createScene(mapId) {
 
             let startCratePos = chassis.body.parts.find(x => x.label == "cratePosition").position;
 
-            let CRATE_SIZE = 100 * CRATE_SCALE;
-            for (var crateObj of gameState.crates) {
+            let CRATE_SIZE = 100 * configJson.crate.scale;
+            for (let crateObj of gameState.crates) {
                 let x = startCratePos.x + ((i % 2) * CRATE_SIZE);
                 let y = startCratePos.y - (Math.floor((i / 2)) * CRATE_SIZE);
 
-                crateLoader.create(this.matter, { x, y, shapes, type: crateObj.name, scale: CRATE_SCALE });
+                crateLoader.create(this.matter, { x, y, shapes, type: crateObj.name, scale: configJson.crate.scale });
 
                 i++;
             }
@@ -172,6 +166,8 @@ async function createScene(mapId) {
                 gameState.time = 0;
 
             UI.updateId("time-left", (gameState.time / 1000).toFixed(1));
+
+            const WHEEL_ANGULAR_VELOCITY = configJson.truck.wheelVelocity;
 
             if (dKey.isDown || rightArrowKey.isDown) {
                 Body.setAngularVelocity( backWheel.body, WHEEL_ANGULAR_VELOCITY);
@@ -243,5 +239,5 @@ const UI = new UIController({ onGameStart: () => {
 run().then(() => {
     UI.crateSelector(gameState);
     UI.select("loadout");
-    nextMap("map_01", [...configJson.crates]);
+    //nextMap("map_02", [...configJson.crates]);
 });

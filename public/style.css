@@ -18,10 +18,7 @@ img.truck {
     top: 0;
     width: 800px;
     text-align: center;
-}
-
-#hud #time-left {
-    text-align: center;
+    color: white;
 }
 
 .crate {
@@ -107,5 +104,4 @@ img.truck {
     width: 100%;
     height: 1px;
     border-bottom: 2px solid white;
-
 }

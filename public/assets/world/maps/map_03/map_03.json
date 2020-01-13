@@ -1,11 +1,15 @@
 {
     "levelTime": 30,
-    "timerColour": "white",
     "background": [
         {
             "key": "background",
             "path": "Background.png",
             "parallaxSpeedX": 0
+        },
+        {
+            "key": "clouds",
+            "path": "cloud.png",
+            "speedX": 0.1
         },
         {
             "key": "mid",
