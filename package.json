@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-      "build": "npx webpack",
-      "start": "node index.js",
-      "build-and-start": "npm run build && npm run start",
+    "build": "npx webpack",
+    "start": "node index.js",
+    "build-and-start": "npm run build && npm run start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,7 +14,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "jquery": "^3.4.1",
-    "phaser": "^3.20.1"
+    "phaser": "^3.21.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",

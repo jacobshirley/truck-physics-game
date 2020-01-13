@@ -1,5 +1,5 @@
 
-
+const Phaser = require("phaser");
 
 const TruckLoader = require("./truck.js");
 
