@@ -56,7 +56,7 @@ module.exports = class UIController {
     async runHighscoresSequence(gameState) {
         let $list = $("#highscores #list");
 
-        $("#highscores #score").text("£" + gameState.money);
+        $("#highscores #score").text("£" + gameState.money.toFixed(2));
 
         let highscores = JSON.parse(document.cookie || "[]");
         highscores.push(gameState.money);
