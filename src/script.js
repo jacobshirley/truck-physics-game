@@ -19,6 +19,13 @@ let config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        parent: document.body,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 800,
+        height: 600
+    },
     physics: {
         default: 'matter',
         matter: {
@@ -50,6 +57,11 @@ let gameState = {
 
 let game = new Phaser.Game(config);
 let maps = [ ...configJson.maps ];
+
+// Handle window resize to keep game fullscreen
+window.addEventListener('resize', () => {
+    game.scale.resize(window.innerWidth, window.innerHeight);
+});
 
 async function createScene(mapId) {
 
