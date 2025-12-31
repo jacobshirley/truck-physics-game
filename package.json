@@ -4,10 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_OPTIONS='--openssl-legacy-provider' webpack",
+    "compile": "NODE_OPTIONS='--openssl-legacy-provider' webpack",
     "start": "node server.js",
-    "build-and-start": "npm run build && npm run start",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build-and-start": "npm run build && npm run start"
   },
   "author": "",
   "license": "ISC",
