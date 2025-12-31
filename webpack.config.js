@@ -8,4 +8,9 @@ module.exports = {
     filename: 'build.js',
     path: path.resolve(__dirname, 'public'),
   },
+  resolve: {
+    fallback: {
+      "path": require.resolve("path-browserify")
+    }
+  }
 };

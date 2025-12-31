@@ -1,0 +1,2 @@
+# This file prevents pnpm from looking up the directory tree for workspace configuration
+packages: []

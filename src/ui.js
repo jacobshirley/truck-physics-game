@@ -2,7 +2,9 @@ const $ = require("jquery");
 
 const config = require("../config.json");
 
-const { crates, startMap } = config;
+const { crates } = config;
+
+const MAX_CRATES = 6;
 
 function fadeInPromise($el) {
     return new Promise((res, err) => {
@@ -177,16 +179,16 @@ module.exports = class UIController {
                                 '<div class="reward">+ £' + crate.reward + '</div>' +
                                 '</div>');
 
-            $crate.hover((crate => e => {
+            $crate.on('mouseenter', (crate => e => {
                 $(".crate-placement.active").append('<img src="' + config.crateDir + crate.path + '" />');
-            })(crate), function () {
+            })(crate)).on('mouseleave', function () {
                 $(".crate-placement.active").empty();
             });
 
-            $crate.click((crate => e => {
+            $crate.on('click', (crate => e => {
                 $("#start-game-loadout").attr("disabled", false);
                 $(".crate-placement.active").removeClass("active");
-                if (state.crates.length >= 4)
+                if (state.crates.length >= MAX_CRATES)
                     return null;
 
                 state.crates.push(crate);
@@ -195,7 +197,7 @@ module.exports = class UIController {
 
                 if (state.money < 0) {
                     state.money = 0;
-                } else if (state.money >= crate.price && state.crates.length < 4) {
+                } else if (state.money >= crate.price && state.crates.length < MAX_CRATES) {
                     $("#placements").append('<div class="crate-placement pos-' + (state.crates.length + 1) + ' active"><img src="' + config.crateDir +  crate.path + '" /></div>');
                 }
 

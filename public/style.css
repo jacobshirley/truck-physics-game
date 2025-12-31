@@ -37,10 +37,16 @@ canvas {
     z-index: 1000;
 }
 
-img.truck {
+.truck-container {
     position: relative;
-    top: 80px;
+    display: inline-block;
     width: 100%;
+    margin-top: 80px;
+}
+
+img.truck {
+    width: 100%;
+    display: block;
 }
 
 #hud {
@@ -85,33 +91,44 @@ img.truck {
 }
 
 .crate-placement {
-    width: 100px;
-    height: 100px;
+    width: 6vw;
+    height: 6vw;
     position: absolute;
+    box-sizing: border-box;
 }
 
 .crate-placement.active {
-    border: 5px solid green;
+    border: 3px solid green;
 }
 
 .crate-placement.pos-1 {
-    left: 80px;
-    top: 120px;
+    left: 15%;
+    top: 35%;
 }
 
 .crate-placement.pos-2 {
-    left: 180px;
-    top: 120px;
+    left: 15%;
+    top: calc(35% - 6vw);
 }
 
 .crate-placement.pos-3 {
-    left: 80px;
-    top: 20px;
+    left: 30%;
+    top: 35%;
 }
 
 .crate-placement.pos-4 {
-    left: 180px;
-    top: 20px;
+    left: 30%;
+    top: calc(35% - 6vw);
+}
+
+.crate-placement.pos-5 {
+    left: 45%;
+    top: 35%;
+}
+
+.crate-placement.pos-6 {
+    left: 45%;
+    top: calc(35% - 6vw);
 }
 
 .crate-placement img {

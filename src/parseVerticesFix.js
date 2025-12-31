@@ -1,6 +1,4 @@
-const Body = Phaser.Physics.Matter.Matter.Body;
 const Vector = Phaser.Physics.Matter.Matter.Vector;
-const Common = Phaser.Physics.Matter.Matter.Common;
 const Vertices = Phaser.Physics.Matter.Matter.Vertices;
 const Bounds = Phaser.Physics.Matter.Matter.Bounds;
 const Bodies = Phaser.Physics.Matter.Matter.Bodies;
@@ -17,12 +15,8 @@ module.exports =  function parseVerticesFix(PhysicsEditorParser) {
         for (v = 0; v < vertexSets.length; v += 1)
         {
             let pos = Vertices.centre(vertexSets[v]);
-            let verts = vertexSets[v];//map(vert => ({...vert, x: vert.x - pos.x, y: vert.y - pos.y}));
+            let verts = vertexSets[v];
 
-            /*parts.push(Body.create(Common.extend({
-                position: pos,
-                vertices: verts
-            }, options)));*/
             parts.push(Bodies.fromVertices(pos.x, pos.y, verts, options));
         }
 
